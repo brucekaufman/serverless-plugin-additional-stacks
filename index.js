@@ -359,15 +359,15 @@ class AdditionalStacksPlugin {
       Tags: Object.keys(stackTags).map((key) => ({ Key: key, Value: stackTags[key] })),
     }
 
-    if (this.serverless.service.provider.cfnRole) {
-      params.RoleARN = this.serverless.service.provider.cfnRole;
+    if (this.serverless.service.provider.iam.deploymentRole) {
+      params.RoleARN = this.serverless.service.provider.iam.deploymentRole;
     }
 
     // If the CloudFormation Template has the Transform tag, an additional capability is needed.
     if (compiledCloudFormationTemplate.Transform) {
       params.Capabilities.push("CAPABILITY_AUTO_EXPAND")
     }
-
+    this.serverless.cli.log('Creating additional stack ' + stackName + '...')
     this.serverless.cli.log('Creating additional stack ' + stackName + '...')
     return this.provider.request(
       'CloudFormation',
@@ -405,8 +405,8 @@ class AdditionalStacksPlugin {
       Tags: Object.keys(stackTags).map((key) => ({ Key: key, Value: stackTags[key] })),
     }
 
-    if (this.serverless.service.provider.cfnRole) {
-      params.RoleARN = this.serverless.service.provider.cfnRole;
+    if (this.serverless.service.provider.iam.deploymentRole) {
+      params.RoleARN = this.serverless.service.provider.iam.deploymentRole;
     }
 
     // If the CloudFormation Template has the Transform tag, an additional capability is needed.
@@ -444,8 +444,8 @@ class AdditionalStacksPlugin {
     const params = {
       StackName: fullStackName,
     }
-    if (this.serverless.service.provider.cfnRole) {
-      params.RoleARN = this.serverless.service.provider.cfnRole;
+    if (this.serverless.service.provider.iam.deploymentRole) {
+      params.RoleARN = this.serverless.service.provider.iam.deploymentRole;
     }
     return this.provider.request(
       'CloudFormation',
