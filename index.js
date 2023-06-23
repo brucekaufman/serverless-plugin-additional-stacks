@@ -358,6 +358,11 @@ class AdditionalStacksPlugin {
       TemplateBody: JSON.stringify(compiledCloudFormationTemplate),
       Tags: Object.keys(stackTags).map((key) => ({ Key: key, Value: stackTags[key] })),
     }
+
+    if (this.serverless.service.provider.cfnRole) {
+      params.RoleARN = this.serverless.service.provider.cfnRole;
+    }
+
     // If the CloudFormation Template has the Transform tag, an additional capability is needed.
     if (compiledCloudFormationTemplate.Transform) {
       params.Capabilities.push("CAPABILITY_AUTO_EXPAND")
@@ -399,6 +404,11 @@ class AdditionalStacksPlugin {
       TemplateBody: JSON.stringify(compiledCloudFormationTemplate),
       Tags: Object.keys(stackTags).map((key) => ({ Key: key, Value: stackTags[key] })),
     }
+
+    if (this.serverless.service.provider.cfnRole) {
+      params.RoleARN = this.serverless.service.provider.cfnRole;
+    }
+
     // If the CloudFormation Template has the Transform tag, an additional capability is needed.
     if (compiledCloudFormationTemplate.Transform) {
       params.Capabilities.push("CAPABILITY_AUTO_EXPAND")
@@ -431,11 +441,16 @@ class AdditionalStacksPlugin {
     // Generate full stack name
     const fullStackName = this.getFullStackName(stackName, stack)
     this.serverless.cli.log('Removing additional stack ' + stackName + '...')
+    const params = {
+      StackName: fullStackName,
+    }
+    if (this.serverless.service.provider.cfnRole) {
+      params.RoleARN = this.serverless.service.provider.cfnRole;
+    }
     return this.provider.request(
       'CloudFormation',
-      'deleteStack', {
-      StackName: fullStackName,
-    },
+      'deleteStack',
+      params,
       this.options.stage,
       this.options.region
     )
